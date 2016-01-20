@@ -69,6 +69,19 @@ class Contact
       contact
     end
 
+    def search(query)
+      res = CONNECT.exec_params('SELECT * FROM contact WHERE name LIKE $1 OR email LIKE $1;', ["%#{query}%"])
+      contact = Contact.new(res[0]['name'], res[0]['email'], res[0]['id'], res[0]['phone_number'])
+      puts "Index: #{contact.index}"
+      puts "Name: #{contact.name}"
+      puts "Email: #{contact.email}"
+      puts "Phone No: #{contact.phone_no}"
+      puts "---"
+      contact
+      ###  Fix so that multiple contact objects are returned.
+    end
+
+
     def email_exists?(email)
       CSV.foreach(CSV_FILE) do |row|
         if row[2].downcase == email.downcase

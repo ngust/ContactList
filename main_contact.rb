@@ -34,6 +34,8 @@ when "show"
   Contact.show(ARGV[1])
 when "find"
   Contact.find(ARGV[1])
+when "search"
+  Contact.search(ARGV[1])
 when "update"
   contact = Contact.find(ARGV[1])
   contact.update
