@@ -1,27 +1,26 @@
+require 'colorize'
 require_relative 'contact'
 CSV_FILE = 'contacts.csv'
+
+class AlreadyExists < RuntimeError
+end
 
 help_message = "Here is a list of available commands:
     new - Create a new contact
     list - List all contacts 
     show - Show a contact
-    find - Find a contact
-    add - Add phone number(s) to existing contact"
+    find [id]- Find a contact
+    update [id] - change an entry
+    destroy [id] - delete an entry from database"
 
-def create_contact
-  puts "Enter your name:"
-  name = STDIN.gets.chomp
-  puts "Enter your email:"
-  email = STDIN.gets.chomp
-  @contact = Contact.new(name, email, @index)
+def create_contact_rescue
+  begin
+    create_contact
+  rescue
+    puts "Email already exits, cannot be entered".colorize(:red)
+  end
 end
 
-def caclulate_index
-  col_data = []
-  CSV.foreach(CSV_FILE) {|row| col_data << row[0].to_i}
-  @index = col_data.max
-  @index += 1
-end
 
 ARGV << 'help' if ARGV.empty?
 case ARGV[0].downcase
@@ -30,11 +29,15 @@ when "help"
 when "list"
   Contact.list
 when "new"
-  caclulate_index
-  create_contact
-  puts "#{@contact.inspect} was added to the list"
+  Contact.create_contact
 when "show"
   Contact.show(ARGV[1])
-when "search"
-  Contact.search(ARGV[1])
+when "find"
+  Contact.find(ARGV[1])
+when "update"
+  contact = Contact.find(ARGV[1])
+  contact.update
+when "destroy"
+  contact = Contact.find(ARGV[1])
+  contact.destroy
 end

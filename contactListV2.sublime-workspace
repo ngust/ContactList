@@ -1,0 +1,650 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"is",
+				"is_a"
+			],
+			[
+				"ra",
+				"range"
+			],
+			[
+				"safe",
+				"safe_require"
+			],
+			[
+				"dama",
+				"damage_to_robot"
+			],
+			[
+				"items",
+				"items_weight"
+			],
+			[
+				"it",
+				"items"
+			],
+			[
+				"di",
+				"different_array"
+			],
+			[
+				"healt",
+				"health_points"
+			],
+			[
+				"hea",
+				"health_points"
+			],
+			[
+				"attack",
+				"attack_power"
+			],
+			[
+				"att",
+				"attr_reader"
+			],
+			[
+				"help",
+				"help_message"
+			],
+			[
+				"In",
+				"InvalidGuessError"
+			],
+			[
+				"ans",
+				"answer_timer"
+			],
+			[
+				"i",
+				"to_i"
+			],
+			[
+				"pla",
+				"player1"
+			],
+			[
+				"end",
+				"end_time"
+			],
+			[
+				"outp",
+				"output2"
+			],
+			[
+				"state",
+				"describe_state"
+			],
+			[
+				"letter",
+				"letters"
+			],
+			[
+				"back",
+				"background-color"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "require 'colorize'\nrequire_relative 'contact'\nCSV_FILE = 'contacts.csv'\n\nclass AlreadyExists < RuntimeError\nend\n\nhelp_message = \"Here is a list of available commands:\n    new - Create a new contact\n    list - List all contacts \n    show - Show a contact\n    find - Find a contact\n    add - Add phone number(s) to existing contact\"\n\ndef create_contact\n  puts \"Enter your name:\"\n  name = STDIN.gets.chomp\n  puts \"Enter your email:\"\n  email = STDIN.gets.chomp\n  raise AlreadyExists, \"Email already exits\" if Contact.email_exists?(email)\n  add_phone\n  @contact = Contact.new(name, email, @index, @phone_hash)\nend\n\ndef create_contact_rescue\n  begin\n    create_contact\n  rescue\n    puts \"Email already exits, cannot be entered\".colorize(:red)\n  end\nend\n\ndef caclulate_index\n  col_data = []\n  CSV.foreach(CSV_FILE) {|row| col_data << row[0].to_i}\n  @index = col_data.max\n  @index += 1\nend\n\ndef add_phone\n  @phone_hash = {}\n    more_numbers = true\n    while more_numbers\n    print \"What kind of phone? (home, cell, work): \"\n    phone_key = STDIN.gets.chomp\n    print \"Enter phone number (123-123-123): \"\n    phone_number = STDIN.gets.chomp\n    @phone_hash[phone_key] = phone_number\n    print \"Want to add anouther phone? (y/n)\"\n    more_phones = STDIN.gets.chomp.downcase\n      if more_phones == \"n\"\n        more_numbers = false\n      end\n    end\nend\n\nARGV << 'help' if ARGV.empty?\ncase ARGV[0].downcase\nwhen \"help\"\n  puts help_message\nwhen \"list\"\n  Contact.list\nwhen \"new\"\n  caclulate_index\n  create_contact_rescue\n  puts \"#{@contact.inspect} was added to the list\"\nwhen \"show\"\n  Contact.show(ARGV[1])\nwhen \"search\"\n  Contact.search(ARGV[1])\nend\n",
+			"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/main_contact.rb",
+			"file_size": 1639,
+			"file_write_time": 130977064571041424,
+			"settings":
+			{
+				"buffer_size": 1639,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "CREATE TABLE contact (\n  id SERIAL NOT NULL PRIMARY KEY,\n  name varchar(40) NOT NULL,\n  email varchar(40) NOT NULL,\n  phone_number varchar(255)\n);",
+			"settings":
+			{
+				"buffer_size": 146,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "require 'pg'\n\nputs 'Connecting to the database...'\nconn = PG.connect(\n  host: 'localhost',\n  dbname: 'bookstore',\n  user: 'development',\n  password: 'development'\n)\n\nputs 'Finding authors...'\nconn.exec('SELECT * FROM authors;') do |results|\n  # results is a collection (array) of records (hashes)\n  results.each do |author|\n    puts author.inspect\n  end\nend\n\nputs 'Closing the connection...'\nconn.close\n\nputs 'DONE'",
+			"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/pg-test.rb",
+			"file_size": 415,
+			"file_write_time": 130977089470849511,
+			"settings":
+			{
+				"buffer_size": 415,
+				"line_ending": "Unix",
+				"name": "require 'pg'"
+			}
+		},
+		{
+			"contents": "1,Khurram Virani,kvirani@lighthouselabs.ca\n2,Don Burks,don@lighthouselabs.ca\n3,Nick,nick@test.com\n4,Mike,mike@test\n5,Jimmy,jim@eats.it\n6,MIke,crazy_aces@hotmail.com\n7,gklj,hbgl\n8,Nick,nick@test.ca\n9,Miley Cyrus,mc@countrymusic.com,\"{\"\"mobile\"\"=>\"\"555-264-0467\"\"}\"\n10,sdagsa,gasdgsdag,\"{\"\"mobile\"\"=>\"\"555-468-8436\"\"}\"\n11,Nick,gsdgfd@fsafsd.com,\"{\"\"work\"\"=>\"\"465-521-1167\"\"}\"\n12,Crazy 8,8ball@snooker.com,\"{\"\"work\"\"=>\"\"467-164-2224\"\", \"\"mobile\"\"=>\"\"467-167-1643\"\"}\"\n13,Hulk Hogan,bigbadhulk@wwf.com,\"{\"\"work\"\"=>\"\"4643435435434\"\"}\"\n14,Jennifer Love Hewitt,j_love@gmail.com,\"{\"\"home\"\"=>\"\"555-137-13456\"\"}\"\n",
+			"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/contacts.csv",
+			"file_size": 602,
+			"file_write_time": 130977064571036670,
+			"settings":
+			{
+				"buffer_size": 602,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "require_relative 'contact'\n#require_relative 'contact_database'\n\ncase ARGV[0]\nwhen \"help\"\n  puts \"Here is a list of available commands:\n    new - Create a new contact\n    list - List all contacts \n    show - Show a contact\n    find - Find a contact\n    add - Add phone number(s) to existing contact\"\nwhen \"new\"\n  ARGV.shift\n  print \"Email: \"\n  email = gets.chomp\n  if Contact.email_already_in_db?(email)\n    puts \"Cannot add contact, email is already in the database.\"\n    exit\n  end\n  print \"Full name: \"\n  full_name = gets.chomp\n  phone_hash = {}\n  add_number = true\n  while add_number\n  print \"Enter phone type (ie. 'home', 'mobile', 'work'): \"\n  phone_hash_key = gets.chomp\n  print \"Enter phone number (ie. 123-123-123): \"\n  phone_hash_value = gets.chomp\n  phone_hash[phone_hash_key] = phone_hash_value\n  print \"Add another number? (y/n): \"\n  another_number_input = gets.chomp\n    if another_number_input == \"n\"\n      add_number = false\n    end\n  end\n\n  contact = Contact.new(full_name, email, phone_hash)\nwhen \"list\"\n  Contact.list\nwhen \"add\"\n    \nend\n\ncase \nwhen ARGV[0] == \"show\" && !ARGV[1].nil?\n  Contact.show(ARGV[1])\nwhen ARGV[0] == \"find\" && !ARGV[1].nil?\n  Contact.find(ARGV[1])\nend\n\n\n\n",
+			"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/contact_list.rb",
+			"file_size": 1199,
+			"file_write_time": 130977064568387285,
+			"settings":
+			{
+				"buffer_size": 1199,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "contact.rb",
+			"settings":
+			{
+				"buffer_size": 2155,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 75.0,
+		"last_filter": "vmen",
+		"selected_items":
+		[
+			[
+				"vmen",
+				"View: Toggle Menu"
+			]
+		],
+		"width": 477.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/contact_list/contact.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/contact_list/contact_list.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/contact_list/contacts.csv",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/contact_list/main_contact.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/10_auto_equip_weapons.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/12_auto_heal_if_needed.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/11_can_only_attack_nearby_robots.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/11_robot_health.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/09_robot_can_equip_and_use_weapons.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/03_robot_item_interaction.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/05_robot_can_eat_bolts.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/06_weapons.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/07_lasers.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/08_plasma_cannons.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/02_items_have_name_and_weight.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/04_robot_health.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day4/MockTest/lighthouse-mock-test-oop/spec/01_robot_has_position_and_movement.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day3/webScraper/comment_stolen.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/lib/unit.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_04.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_13.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/lib/barracks.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/lib/peasant.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/lib/footman.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day1/2P_game/2P_exep.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_03.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_02.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_01.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day2/warcraft/warcraft3/spec/test_10.rb",
+		"/media/ng/DATA/LighthouseLabs/Day5/2player_twoop.rb",
+		"/media/ng/DATA/LighthouseLabs/Day5/person.rb",
+		"/media/ng/DATA/LighthouseLabs/Week1/Day2/DogBark/woof.rb",
+		"/media/ng/DATA/LighthouseLabs/Week1/Day3/state_info.rb",
+		"/media/ng/DATA/LighthouseLabs/Day6_Sat/poppinBottles.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day1/ClassInherit/chimpanzee.rb",
+		"/media/ng/DATA/LighthouseLabs/Week2/Day1/File_IO.rb",
+		"/media/ng/DATA/LighthouseLabs/Day6_Sat/rspec/1_hello_world.rb",
+		"/media/ng/DATA/LighthouseLabs/Day6_Sat/Questions",
+		"/media/ng/DATA/LighthouseLabs/Day3/Debug/debug02.rb",
+		"/media/ng/DATA/LighthouseLabs/Day6_Sat/rspec/2_arrays.rb",
+		"/media/ng/DATA/LighthouseLabs/Day4/candidates/filters.rb",
+		"/media/ng/DATA/LighthouseLabs/Day4/benchmark_with_block.rb",
+		"/media/ng/DATA/LighthouseLabs/Day4/regular_expressions.rb",
+		"/media/ng/DATA/LighthouseLabs/Day4/game/person.rb",
+		"/media/ng/DATA/LighthouseLabs/Day4/game/2player_twoop.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/roman.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/Questions",
+		"/media/ng/DATA/LighthouseLabs/Day3/state_info.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/count.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/Debug/debug03.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/Debug/debug01.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/Debug/debug04.rb",
+		"/media/ng/DATA/LighthouseLabs/Day3/Debug/error_example.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/End of day questions",
+		"/media/ng/DATA/LighthouseLabs/Day2/example.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/MaxVal/max.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/Renter/renter.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/DogBark/woof.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/Sort/sort.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/Fizzbuzz_messy/fizzbuzz_messy.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/SignShop/banner.rb",
+		"/media/ng/DATA/LighthouseLabs/Day2/fizzbuzz/fizzbuzz.rb",
+		"/media/ng/DATA/LighthouseLabs/PreCourse/Ruby/FizzBuzz/FizzBuzz.rb",
+		"/media/ng/DATA/LighthouseLabs/Day1/git-mania/cities.html",
+		"/media/ng/DATA/ng/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/media/ng/DATA/LighthouseLabs/Ruby/Calculator.rb",
+		"/media/ng/DATA/LighthouseLabs/Ruby/FizzBuzz.rb",
+		"/media/ng/DATA/LighthouseLabs/TacoSalad/script.js",
+		"/media/ng/DATA/LighthouseLabs/TacoSalad/style.css",
+		"/media/ng/DATA/LighthouseLabs/TacoSalad/tacosaladJS.html",
+		"/media/ng/DATA/WestCoastPlacerBLOG/SiteFiles/FreedomNov2015/page-templates/BlogTemplate.php",
+		"/media/ng/DATA/WestCoastPlacerBLOG/SiteFiles/recommendedSidebar.html",
+		"/media/ng/DATA/WestCoastPlacerBLOG/funtions.php"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"thing",
+			"&#39;",
+			"&#",
+			"#&&",
+			"name",
+			"damage",
+			"rubies",
+			"points",
+			"url",
+			"title",
+			"'\n",
+			"peasant",
+			"building",
+			"footman",
+			"end",
+			"contacts.csv",
+			"class",
+			"bottles",
+			"free",
+			"1",
+			"lives",
+			"p2_lives",
+			"p1_lives",
+			"player1",
+			"p2_lives",
+			").(\\",
+			"done",
+			"0",
+			"q",
+			"radio",
+			"li",
+			"'li'",
+			"'#main'",
+			"img",
+			"'.instructions'",
+			"200",
+			"	\n",
+			"700px",
+			"%;\n",
+			"itemprop=\"ingredients\""
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"ent",
+			"'",
+			"hearts",
+			"name",
+			"date",
+			"text",
+			"user",
+			"unit",
+			"barracks",
+			"peasant",
+			"csv_file",
+			"caps",
+			"@free",
+			"2",
+			"points",
+			"player2.lives",
+			"player1.lives",
+			"player2.lives",
+			"swap",
+			"checkbox",
+			"span",
+			"label",
+			"'#ingredients'",
+			"'img'",
+			"'#main'",
+			"img",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/main_contact.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1639,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								318,
+								318
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 146,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SQL/SQL.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/pg-test.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								415,
+								415
+							]
+						],
+						"settings":
+						{
+							"auto_name": "require 'pg'",
+							"syntax": "Packages/Ruby/Ruby.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/contacts.csv",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 602,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "/media/ng/DATA/LighthouseLabs/Week3/contact_list_ORB/contact_list.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1199,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								40,
+								40
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "contact.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2155,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								25,
+								25
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.379941434846,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 243.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 112.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
